@@ -1,4 +1,5 @@
 #include "../../INCLUDES/cub3d.h"
+
 int	is_map(char *line, int *is_map, t_game *game)
 {
 	char		*temp;

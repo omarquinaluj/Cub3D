@@ -24,8 +24,10 @@ int	parse(t_game *game, char *argv)
 		return (1);
 	if (rectangular_map(game) == 1)
 		return (1);
-	if (check_rectangle(game) == 1)
-		return (1);
+	if (!check_spaces(game))
+		return (errors("Map open (spaces)\n"));
+	if (!validate_map(game))
+		return (errors("Map not closed\n"));
 	set_player_angle(game);
 	return (0);
 }

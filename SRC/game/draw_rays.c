@@ -1,79 +1,157 @@
 #include "../../INCLUDES/cub3d.h"
+#include <math.h>
 
-int	is_a_block(t_game *game, float ray_x, float ray_y)
+// Devuelve true si la celda es pared
+int	is_a_block(t_game *game, int map_x, int map_y)
 {
-	if (ray_x > game->map_width || ray_y > game->map_height
-		|| ray_x < 0 || ray_y < 0)
+	if (map_x < 0 || map_y < 0 || map_x >= game->map_width || map_y >= game->map_height)
 		return (1);
-	return (game->map[(int)ray_y][(int)ray_x] == '1');
+	return (game->map[map_y][map_x] == '1');
 }
 
+// Calcula el color de un pixel
 void	put_pixel(int x, int y, int color, t_game *game)
 {
-	int	index;
-
 	if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
-		return ;
-	index = (y * game->mlx->size_line) + (x * (game->mlx->bpp / 8));
-	if (index < 0 || index >= (HEIGHT * game->mlx->size_line))
-		return ;
-	game->mlx->data[index] = color & 0xFF;
-	game->mlx->data[index + 1] = (color >> 8) & 0xFF;
-	game->mlx->data[index + 2] = (color >> 16) & 0xFF;
+		return;
+	((unsigned int *)game->mlx->data)[y * (game->mlx->size_line / 4) + x] = color;
 }
 
-void	set_the_variables(t_point *ray, t_point *prev,
-	float ray_angle, t_game *game)
-{
-	t_point	delta;
+// Obtener color de la textura de forma segura
 
-	delta.x = cos(deg_to_rad(ray_angle));
-	delta.y = sin(deg_to_rad(ray_angle));
-	prev->x = game->player_x;
-	prev->y = game->player_y;
-	ray->x = game->player_x + (delta.x * STEP);
-	ray->y = game->player_y + (delta.y * STEP);
-	while (!is_a_block(game, ray->x, ray->y))
+
+// Dibujar una columna de pared usando textura
+static void draw_wall_line(t_game *game, int x, int wall_height, int wall_plane, int tex_x)
+{
+	if (wall_height <= 0)
+		return;
+
+	int wall_y = (HEIGHT - wall_height) / 2;
+	int i = 0;
+	t_info texture = game->info[wall_plane];
+	int texture_y;
+
+	if (wall_y < 0)
 	{
-		prev->x = ray->x;
-		prev->y = ray->y;
-		ray->x += delta.x * STEP;
-		ray->y += delta.y * STEP;
+		i = -wall_y;
+		wall_y = 0;
+	}
+
+	while (i < wall_height && wall_y < HEIGHT)
+	{
+		texture_y = (int)((float)i / wall_height * texture.height);
+		if (texture_y >= texture.height)
+			texture_y = texture.height - 1;
+
+		put_pixel(x, wall_y, get_pixel_from_texture(wall_plane, tex_x, texture_y, game), game);
+		i++;
+		wall_y++;
 	}
 }
 
-void	draw_a_ray(t_game *game, float ray_angle, int ray_iteration)
+// Dibuja un rayo individual
+void draw_a_ray_vector(t_game *game, float ray_dir_x, float ray_dir_y, int x)
 {
-	t_point	prev;
-	t_point	ray;
-	float	dist;
+	float px = game->player_x;
+	float py = game->player_y;
+	int map_x = (int)px;
+	int map_y = (int)py;
 
-	set_the_variables(&ray, &prev, ray_angle, game);
-	dist = (sqrtf((ray.x - game->player_x) * (ray.x - game->player_x)
-				+ (ray.y - game->player_y)
-				* (ray.y - game->player_y))) * cos(deg_to_rad(ray_angle)
-			- deg_to_rad(game->player->angle));
-	if ((int)prev.x > (int)ray.x)
-		is_west(dist, 64 - ((ray.y - (int)ray.y) * 64), ray_iteration, game);
-	else if ((int)prev.y > (int)ray.y)
-		is_north(dist, (ray.x - (int)ray.x) * 64, ray_iteration, game);
-	else if ((int)prev.x < (int)ray.x)
-		is_east(dist, (ray.y - (int)ray.y) * 64, ray_iteration, game);
+	float delta_dist_x = (ray_dir_x == 0) ? 1e30 : fabs(1 / ray_dir_x);
+	float delta_dist_y = (ray_dir_y == 0) ? 1e30 : fabs(1 / ray_dir_y);
+
+	int step_x, step_y;
+	float side_dist_x, side_dist_y;
+
+	if (ray_dir_x < 0)
+	{
+		step_x = -1;
+		side_dist_x = (px - map_x) * delta_dist_x;
+	}
 	else
-		is_south(dist, 64 - ((ray.x - (int)ray.x) * 64), ray_iteration, game);
+	{
+		step_x = 1;
+		side_dist_x = (map_x + 1.0 - px) * delta_dist_x;
+	}
+
+	if (ray_dir_y < 0)
+	{
+		step_y = -1;
+		side_dist_y = (py - map_y) * delta_dist_y;
+	}
+	else
+	{
+		step_y = 1;
+		side_dist_y = (map_y + 1.0 - py) * delta_dist_y;
+	}
+
+	int hit = 0;
+	int side;
+
+	while (!hit)
+	{
+		if (side_dist_x < side_dist_y)
+		{
+			side_dist_x += delta_dist_x;
+			map_x += step_x;
+			side = 0;
+		}
+		else
+		{
+			side_dist_y += delta_dist_y;
+			map_y += step_y;
+			side = 1;
+		}
+
+		if (is_a_block(game, map_x, map_y))
+			hit = 1;
+	}
+
+	// Distancia perpendicular al plano de la cámara
+	float perp_dist;
+	if (side == 0)
+		perp_dist = (map_x - px + (step_x < 0 ? 1 : 0)) / ray_dir_x;
+	else
+		perp_dist = (map_y - py + (step_y < 0 ? 1 : 0)) / ray_dir_y;
+
+	if (perp_dist <= 0)
+		perp_dist = 0.0001;
+
+	int wall_height = (int)(HEIGHT / perp_dist);
+
+	// Coordenada de la textura horizontal
+	float wall_x = (side == 0) ? py + perp_dist * ray_dir_y : px + perp_dist * ray_dir_x;
+	wall_x -= floor(wall_x);
+	int tex_x = (int)(wall_x * game->info[NORTH].width);
+	if (tex_x >= game->info[NORTH].width)
+		tex_x = game->info[NORTH].width - 1;
+
+	int wall_plane;
+	if (side == 0)
+		wall_plane = (step_x < 0) ? WEST : EAST;
+	else
+		wall_plane = (step_y < 0) ? NORTH : SOUTH;
+
+	draw_wall_line(game, x, wall_height, wall_plane, tex_x);
 }
 
-void	draw_rays(t_game *game)
+// Dibuja todos los rayos
+void draw_rays(t_game *game)
 {
-	float	ray_angle;
-	int		ray_iteration;
+	int x;
+	float dir_x = cos(deg_to_rad(game->player->angle));
+	float dir_y = sin(deg_to_rad(game->player->angle));
 
-	ray_angle = -FOV / 2;
-	ray_iteration = 0;
-	while (ray_iteration < WIDTH)
+	float plane_x = -dir_y * tan(deg_to_rad(FOV / 2));
+	float plane_y =  dir_x * tan(deg_to_rad(FOV / 2));
+
+	for (x = 0; x < WIDTH; x++)
 	{
-		draw_a_ray(game, ray_angle + game->player->angle, ray_iteration);
-		ray_iteration++;
-		ray_angle += (float)FOV / (float)WIDTH;
+		float camera_x = 2 * x / (float)WIDTH - 1;
+		float ray_dir_x = dir_x + plane_x * camera_x;
+		float ray_dir_y = dir_y + plane_y * camera_x;
+
+		draw_a_ray_vector(game, ray_dir_x, ray_dir_y, x);
 	}
 }
+

@@ -36,7 +36,7 @@ void	clear_image(t_game *game)
 		x = 0;
 		while (x < WIDTH)
 		{
-			if (y < 600)
+			if (y < HEIGHT / 2)
 				put_pixel(x, y, celing, game);
 			else
 				put_pixel(x, y, floor, game);

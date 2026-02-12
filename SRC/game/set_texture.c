@@ -1,104 +1,76 @@
 #include "../../INCLUDES/cub3d.h"
 
-unsigned int	get_pixel_from_texture(int wall_plane, int texture_x,
-	int texture_y, t_game *game)
+unsigned int get_pixel_from_texture(int wall_plane, int texture_x, int texture_y, t_game *game)
 {
-	t_info			texture;
-	char			*image;
+	t_info texture;
+	char *pixel_addr;
 
 	if (wall_plane == NORTH)
 		texture = game->info[0];
-	if (wall_plane == SOUTH)
+	else if (wall_plane == SOUTH)
 		texture = game->info[1];
-	if (wall_plane == EAST)
+	else if (wall_plane == EAST)
 		texture = game->info[2];
-	if (wall_plane == WEST)
+	else
 		texture = game->info[3];
-	image = texture.data;
-	image += (texture_x * (texture.bpp / 8)) + (texture_y * texture.size_line);
-	return (*(unsigned int *)image);
+	if (texture_x < 0)
+		texture_x = 0;
+	if (texture_x >= texture.width)
+		texture_x = texture.width - 1;
+	if (texture_y < 0)
+		texture_y = 0;
+	if (texture_y >= texture.height)
+		texture_y = texture.height - 1;
+	pixel_addr = texture.data + (texture_y * texture.size_line) + (texture_x * (texture.bpp / 8));
+	return (*(unsigned int *)pixel_addr);
 }
 
-void	is_north(float dist, float plane_x,	int ray_iteration, t_game *game)
+static void	draw_wall_line(t_game *game, int ray_iteration, int wall_height,
+	int wall_plane, int tex_x)
 {
-	int	wall_height;
-	int	wall_y;
-	int	i;
+	if (wall_height <= 0)
+		return;
 
-	if (dist < 1)
-		dist = 1;
-	wall_height = HEIGHT / dist;
-	wall_y = (HEIGHT - wall_height) / 2;
-	i = 0;
-	while (i < wall_height)
+	int		wall_y = (HEIGHT - wall_height) / 2;
+	int		i = 0;
+	int		texture_y;
+	t_info	texture = game->info[wall_plane];
+
+	if (wall_y < 0)
 	{
+		i = -wall_y;
+		wall_y = 0;
+	}
+
+	while (i < wall_height && wall_y < HEIGHT)
+	{
+		texture_y = (int)((float)i / wall_height * texture.height);
+		if (texture_y >= texture.height)
+			texture_y = texture.height - 1;
 		put_pixel(ray_iteration, wall_y,
-			get_pixel_from_texture(NORTH, plane_x, 64 * i / wall_height, game),
+			get_pixel_from_texture(wall_plane, tex_x, texture_y, game),
 			game);
 		wall_y++;
 		i++;
 	}
 }
 
-void	is_south(float dist, float plane_x,	int ray_iteration, t_game *game)
+void	is_north(int tex_x, int ray_iteration, int wall_height, t_game *game)
 {
-	int	wall_height;
-	int	wall_y;
-	int	i;
-
-	if (dist < 1)
-		dist = 1;
-	wall_height = HEIGHT / dist;
-	wall_y = (HEIGHT - wall_height) / 2;
-	i = 0;
-	while (i < wall_height)
-	{
-		put_pixel(ray_iteration, wall_y,
-			get_pixel_from_texture(SOUTH, plane_x, 64 * i / wall_height, game),
-			game);
-		wall_y++;
-		i++;
-	}
+	draw_wall_line(game, ray_iteration, wall_height, NORTH, tex_x);
 }
 
-void	is_east(float dist, float plane_x, int ray_iteration, t_game *game)
+void	is_south(int tex_x, int ray_iteration, int wall_height, t_game *game)
 {
-	int	wall_height;
-	int	wall_y;
-	int	i;
-
-	if (dist < 1)
-		dist = 1;
-	wall_height = HEIGHT / dist;
-	wall_y = (HEIGHT - wall_height) / 2;
-	i = 0;
-	while (i < wall_height)
-	{
-		put_pixel(ray_iteration, wall_y,
-			get_pixel_from_texture(EAST, plane_x, 64 * i / wall_height, game),
-			game);
-		wall_y++;
-		i++;
-	}
+	draw_wall_line(game, ray_iteration, wall_height, SOUTH, tex_x);
 }
 
-void	is_west(float dist, float plane_x, int ray_iteration, t_game *game)
+void	is_east(int tex_x, int ray_iteration, int wall_height, t_game *game)
 {
-	int	wall_height;
-	int	wall_y;
-	int	i;
+	draw_wall_line(game, ray_iteration, wall_height, EAST, tex_x);
+}
 
-	if (dist < 1)
-		dist = 1;
-	wall_height = HEIGHT / dist;
-	wall_y = (HEIGHT - wall_height) / 2;
-	i = 0;
-	while (i < wall_height)
-	{
-		put_pixel(ray_iteration, wall_y,
-			get_pixel_from_texture(WEST, plane_x, 64 * i / wall_height, game),
-			game);
-		wall_y++;
-		i++;
-	}
+void	is_west(int tex_x, int ray_iteration, int wall_height, t_game *game)
+{
+	draw_wall_line(game, ray_iteration, wall_height, WEST, tex_x);
 }
