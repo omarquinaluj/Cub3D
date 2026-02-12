@@ -32,7 +32,7 @@
 # define HEIGHT 1200
 # define PI 3.1415926535897932384626433832
 # define FOV 60
-# define STEP 0.01
+#define STEP 0.01
 
 # define NORTH 0
 # define SOUTH 1
@@ -105,6 +105,7 @@ typedef struct s_game
 	char		*is_map;
 	char		*is_texture;
 	char		**map;
+	int			map_open;
 	int			map_width;
 	int			map_height;
 	char		player_dir;
@@ -127,7 +128,6 @@ void	free_matrix(char **matrix);
 int		check_textures(t_game *game);
 int		check_map(t_game *game);
 int		rectangular_map(t_game *game);
-int		check_rectangle(t_game *game);
 void	free_structure(t_game *game);
 int		check_colors(char **split_line, t_game *game);
 
@@ -144,12 +144,19 @@ void	key_up(t_game *game, float speed);
 void	key_down(t_game *game, float speed);
 void	key_left(t_game *game, float speed);
 void	key_right(t_game *game, float speed);
-void	is_north(float dist, float plane_x,	int ray_iteration, t_game *game);
-void	is_south(float dist, float plane_x,	int ray_iteration, t_game *game);
-void	is_east(float dist, float plane_x, int ray_iteration, t_game *game);
-void	is_west(float dist, float plane_x, int ray_iteration, t_game *game);
+
+void	is_north(int tex_x, int ray_iteration, int wall_height, t_game *game);
+void	is_south(int tex_x, int ray_iteration, int wall_height, t_game *game);
+void	is_east(int tex_x, int ray_iteration, int wall_height, t_game *game);
+void	is_west(int tex_x, int ray_iteration, int wall_height, t_game *game);
 void	put_pixel(int x, int y, int color, t_game *game);
 
+unsigned int get_pixel_from_texture(int wall_plane, int texture_x, int texture_y, t_game *game);
 float	fix_ang(float angle);
 void	clear_image(t_game *game);
+
+int		validate_map(t_game *game);
+int		check_spaces(t_game *game);
+char	**duplicate_map(char **map);
+
 #endif

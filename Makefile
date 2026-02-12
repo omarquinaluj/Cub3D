@@ -15,6 +15,8 @@ SRC				=	SRC/Main.c \
 					$(PARSE_DIR)/check_texture.c \
 					$(PARSE_DIR)/check_cub.c \
 					$(PARSE_DIR)/check_map.c \
+					$(PARSE_DIR)/check_spaces.c \
+					$(PARSE_DIR)/check_flood_fill.c\
 					$(GAME_DIR)/rendering.c \
 					$(GAME_DIR)/remaster.c \
 					$(GAME_DIR)/control_keys.c \
