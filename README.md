@@ -33,7 +33,7 @@ This project focuses on:
 - Textured walls (North, South, East, West)
 - Floor and ceiling coloring
 - Player movement (W, A, S, D)
-- Rotation with arrow keys
+- Rotation with arrow keys( < , >)
 - Collision detection
 - Map validation (closed walls required)
 - Error handling with clear messages
@@ -46,11 +46,45 @@ This project focuses on:
 
 - GCC
 - Make
-- MiniLibX (or MLX42 depending on your implementation)
+- MiniLibX
 - Linux or macOS
 
 ### Clone the repository
 
 ```bash
-git clone https://github.com/<your_username>/cub3d.git
+git clone git@github.com:omarquinaluj/Cube3D.git
 cd cub3d
+```
+To compile:
+``` bash
+make all
+```
+The prerequisite for making cub3D functional is passing it a map as an argument, for example:
+
+``` bash
+./cub3D /valid/map.cub
+```
+
+## Map Rules
+
+The map must be surrounded by walls (1).
+Valid map characters:
+-> 0 → empty space
+-> 1 → wall
+N, S, E, W → player starting position
+The map must be closed.
+Only one player starting position is allowed.
+
+If the file is invalid, the program exits with an error message.
+
+## Technical Overview
+
+Cub3D implements the Raycasting algorithm, which works by:
+1º Casting a ray for each vertical stripe of the screen.
+2º Detecting wall intersections using DDA (Digital Differential Analysis).
+3º Calculating wall distance.
+
+4ºRendering vertical textured slices accordingly.
+
+The project is written in C and follows the 42 Norm.
+
