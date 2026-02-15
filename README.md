@@ -67,24 +67,23 @@ The prerequisite for making cub3D functional is passing it a map as an argument,
 
 ## Map Rules
 
-The map must be surrounded by walls (1).
-Valid map characters:
--> 0 → empty space
--> 1 → wall
-N, S, E, W → player starting position
-The map must be closed.
-Only one player starting position is allowed.
+- The map must be surrounded by walls (1).
+- Valid map characters:
+- 0 → empty space
+- 1 → wall
+- N, S, E, W → player starting position
+- The map must be closed.
+- Only one player starting position is allowed.
 
 If the file is invalid, the program exits with an error message.
 
 ## Technical Overview
 
 Cub3D implements the Raycasting algorithm, which works by:
-1º Casting a ray for each vertical stripe of the screen.
-2º Detecting wall intersections using DDA (Digital Differential Analysis).
-3º Calculating wall distance.
-
-4ºRendering vertical textured slices accordingly.
+- 1º Casting a ray for each vertical stripe of the screen.
+- 2º Detecting wall intersections using DDA (Digital Differential Analysis).
+- 3º Calculating wall distance.
+- 4º Rendering vertical textured slices accordingly.
 
 The project is written in C and follows the 42 Norm.
 
