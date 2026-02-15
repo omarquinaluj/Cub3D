@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CUBE3D_H
-# define CUBE3D_H
+#ifndef CUB3D_H
+# define CUB3D_H
 
 # include "../mlx/mlx.h"
 # include "Libft/libft.h"
@@ -32,7 +32,7 @@
 # define HEIGHT 1200
 # define PI 3.1415926535897932384626433832
 # define FOV 60
-#define STEP 0.01
+# define STEP 0.01
 
 # define NORTH 0
 # define SOUTH 1
@@ -79,6 +79,30 @@ typedef struct s_player
 	bool	right_rotate;
 }				t_player;
 
+typedef struct s_rays
+{
+	float	dir_x;
+	float	dir_y;
+	float	ray_dir_x;
+	float	ray_dir_y;
+	float	plane_x;
+	float	plane_y;
+	int		map_x;
+	int		map_y;
+	float	delta_dist_x;
+	float	delta_dist_y;
+	int		step_x;
+	int		step_y;
+	float	side_dist_x;
+	float	side_dist_y;
+	int		tex_x;
+	int		hit;
+	int		wall_height;
+	int		wall_y;
+	int		draw_i;
+
+}			t_rays;
+
 typedef struct s_mlx
 {
 	void	*mlx;
@@ -111,6 +135,7 @@ typedef struct s_game
 	char		player_dir;
 	float		player_x;
 	float		player_y;
+	t_rays		rays;		
 	t_textures	*textures;
 	t_mlx		*mlx;
 	t_player	*player;
@@ -118,45 +143,50 @@ typedef struct s_game
 }				t_game;
 
 //MAIN
-int		errors(char	*str);
+int				errors(char	*str);
 
 //PARSE
-int		parse(t_game *game, char *argv);
-int		check_cub(char *argv);
-int		open_save_all(char *argv, t_game *game, int temp);
-void	free_matrix(char **matrix);
-int		check_textures(t_game *game);
-int		check_map(t_game *game);
-int		rectangular_map(t_game *game);
-void	free_structure(t_game *game);
-int		check_colors(char **split_line, t_game *game);
+int				parse(t_game *game, char *argv);
+int				check_cub(char *argv);
+int				open_save_all(char *argv, t_game *game, int temp);
+void			free_matrix(char **matrix);
+int				check_textures(t_game *game);
+int				check_map(t_game *game);
+int				rectangular_map(t_game *game);
+void			free_structure(t_game *game);
+int				check_colors(char **split_line, t_game *game);
 
 //RENDER
-int		render_map(t_game *game);
-int		do_destroy_window(t_game *game);
-int		key_release(int key, t_game *game);
-int		key_press(int key, t_game *game);
-int		move_player(t_game *game);
-float	deg_to_rad(float angle);
-void	draw_rays(t_game *game);
-void	put_pixel(int x, int y, int color, t_game *game);
-void	key_up(t_game *game, float speed);
-void	key_down(t_game *game, float speed);
-void	key_left(t_game *game, float speed);
-void	key_right(t_game *game, float speed);
+int				render_map(t_game *game);
+int				do_destroy_window(t_game *game);
+int				key_release(int key, t_game *game);
+int				key_press(int key, t_game *game);
+int				move_player(t_game *game);
+float			deg_to_rad(float angle);
+void			draw_rays(t_game *game);
+void			put_pixel(int x, int y, int color, t_game *game);
+void			key_up(t_game *game, float speed);
+void			key_down(t_game *game, float speed);
+void			key_left(t_game *game, float speed);
+void			key_right(t_game *game, float speed);
 
-void	is_north(int tex_x, int ray_iteration, int wall_height, t_game *game);
-void	is_south(int tex_x, int ray_iteration, int wall_height, t_game *game);
-void	is_east(int tex_x, int ray_iteration, int wall_height, t_game *game);
-void	is_west(int tex_x, int ray_iteration, int wall_height, t_game *game);
-void	put_pixel(int x, int y, int color, t_game *game);
+void			is_north(int ray_iteration, t_game *game);
+void			is_south(int ray_iteration, t_game *game);
+void			is_east(int ray_iteration, t_game *game);
+void			is_west(int ray_iteration, t_game *game);
+void			put_pixel(int x, int y, int color, t_game *game);
 
-unsigned int get_pixel_from_texture(int wall_plane, int texture_x, int texture_y, t_game *game);
-float	fix_ang(float angle);
-void	clear_image(t_game *game);
+float			fix_ang(float angle);
+void			clear_image(t_game *game);
 
-int		validate_map(t_game *game);
-int		check_spaces(t_game *game);
-char	**duplicate_map(char **map);
+int				validate_map(t_game *game);
+int				check_spaces(t_game *game);
+char			**duplicate_map(char **map);
+unsigned int	get_pixel_from_texture(int wall_plane, int texture_y,
+					t_game *game);
+void			draw_wall_line_2(t_game *game, int ray_iteration,
+					int wall_plane);
+void			calculate_and_draw(t_game *game, int side, int x);
+void			init_ray(t_game *game);
 
 #endif

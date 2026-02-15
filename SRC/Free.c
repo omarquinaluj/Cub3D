@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: owmarqui <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/12 22:33:37 by owmarqui          #+#    #+#             */
+/*   Updated: 2026/02/12 23:03:53 by owmarqui         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../INCLUDES/cub3d.h"
 
 void	more_free(t_game *game)
@@ -59,7 +71,7 @@ int	do_destroy_window(t_game *game)
 	return (0);
 }
 
-void    free_matrix(char **matrix)
+void	free_matrix(char **matrix)
 {
 	int		i;
 
