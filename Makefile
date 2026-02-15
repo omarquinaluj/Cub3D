@@ -18,6 +18,9 @@ SRC				=	SRC/Main.c \
 					$(PARSE_DIR)/check_spaces.c \
 					$(PARSE_DIR)/check_flood_fill.c\
 					$(GAME_DIR)/rendering.c \
+					$(GAME_DIR)/init_ray.c \
+					$(GAME_DIR)/calc_draw.c \
+					$(GAME_DIR)/nsew.c\
 					$(GAME_DIR)/remaster.c \
 					$(GAME_DIR)/control_keys.c \
 					$(GAME_DIR)/types_moves.c \
