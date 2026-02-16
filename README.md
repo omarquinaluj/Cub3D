@@ -62,7 +62,7 @@ make all
 The prerequisite for making cub3D functional is passing it a map as an argument, for example:
 
 ``` bash
-./cub3D /valid/map.cub
+./cub3D valid/map.cub
 ```
 
 ## Map Rules
