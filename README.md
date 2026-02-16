@@ -52,7 +52,7 @@ This project focuses on:
 ### Clone the repository
 
 ```bash
-git clone git@github.com:omarquinaluj/Cube3D.git
+git clone git@github.com:omarquinaluj/Cub3D.git
 cd Cub3D
 ```
 To compile:
