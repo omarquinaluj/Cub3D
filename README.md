@@ -90,4 +90,5 @@ The project is written in C and follows the 42 Norm.
 ## Resources
 
 https://lodev.org/cgtutor/raycasting.html
+
 https://www.youtube.com/watch?v=gYRrGTC7GtA&list=PLCXqoZAc8-tyDSaO8jnabOEFhdTQfx77_
