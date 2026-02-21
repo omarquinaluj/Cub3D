@@ -28,6 +28,8 @@
 # include <sys/time.h> //gettimeofday
 # include <math.h>
 
+# define MARGIN 0.05f
+
 # define TILE_SIZE 8
 
 # define WIDTH 1280
@@ -116,6 +118,13 @@ typedef struct s_mlx
 	int		endian;
 }			t_mlx;
 
+typedef struct s_start
+{
+	float	offset;
+	int		map_x;
+	int		map_y;
+}			t_start;
+
 typedef struct s_textures
 {
 	char	*north;
@@ -149,6 +158,8 @@ int				errors(char	*str);
 
 //PARSE
 int				parse(t_game *game, char *argv);
+int				set_texture_line(char *line, t_game *game);
+void			adjust_player_start(t_game *game);
 int				check_cub(char *argv);
 int				open_save_all(char *argv, t_game *game, int temp);
 void			free_matrix(char **matrix);
@@ -190,6 +201,8 @@ void			draw_wall_line_2(t_game *game, int ray_iteration,
 					int wall_plane);
 void			calculate_and_draw(t_game *game, int side, int x);
 void			init_ray(t_game *game);
+
+int				parse_rgb(char *line, int rgb[3]);
 
 //MINIMAP
 void			draw_minimap(t_game *game);

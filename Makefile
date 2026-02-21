@@ -17,6 +17,7 @@ SRC				=	SRC/Main.c \
 					$(PARSE_DIR)/check_map.c \
 					$(PARSE_DIR)/check_spaces.c \
 					$(PARSE_DIR)/check_flood_fill.c\
+					$(PARSE_DIR)/set_texture_line.c\
 					$(GAME_DIR)/rendering.c \
 					$(GAME_DIR)/init_ray.c \
 					$(GAME_DIR)/calc_draw.c \

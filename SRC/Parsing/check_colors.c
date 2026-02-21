@@ -30,33 +30,50 @@ int	check_line(char *line)
 	return (0);
 }
 
-int	add_color(int num_color, char *line)
+static int	parse_number(char *line, int *i)
 {
-	int	comma;
-	int	i;
 	int	n;
 
-	comma = 0;
-	i = 0;
 	n = 0;
-	if (check_line(line) == -1)
+	if (!(line[*i] >= '0' && line[*i] <= '9'))
 		return (-1);
-	while (line[i])
+	while (line[*i] >= '0' && line[*i] <= '9')
 	{
-		if ((!(line[i] >= '0' && line[i] <= '9') && line[i] != ',') || n > 255)
+		n = n * 10 + (line[*i] - '0');
+		if (n > 255)
 			return (-1);
-		if (line[i] >= '0' && line[i] <= '9')
-			n = n * 10 + (line[i] - '0');
-		if (line[i] == ',' && num_color == comma)
-			break ;
-		if (line[i] == ',')
-		{
-			n = 0;
-			comma++;
-		}
-		i++;
+		(*i)++;
 	}
 	return (n);
+}
+
+int	parse_rgb(char *line, int rgb[3])
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (line[i] && count < 3)
+	{
+		while (line[i] == ' ')
+			i++;
+		rgb[count] = parse_number(line, &i);
+		if (rgb[count] == -1)
+			return (-1);
+		count++;
+		while (line[i] == ' ')
+			i++;
+		if (count < 3)
+		{
+			if (line[i] != ',')
+				return (-1);
+			i++;
+		}
+	}
+	if (count != 3 || line[i] != '\0')
+		return (-1);
+	return (0);
 }
 
 int	color(char **split_line)
@@ -65,7 +82,7 @@ int	color(char **split_line)
 			|| !ft_strncmp(split_line[0], "C", 1))
 		&& ft_strlen(split_line[0]) == 1)
 	{
-		if (!split_line[0] || !split_line[1] || split_line[2])
+		if (!split_line[1])
 			return (errors("Colors aren't written correctly\n"));
 	}
 	return (0);
@@ -75,23 +92,23 @@ int	check_colors(char **split_line, t_game *game)
 {
 	if (color(split_line) == 1)
 		return (1);
-	if (!ft_strncmp(split_line[0], "C", 1) && ft_strlen(split_line[0]) == 1)
+	if (!ft_strncmp(split_line[0], "C", 1)
+		&& ft_strlen(split_line[0]) == 1)
 	{
-		if (game->textures->celing[3] == 255)
+		if (game->textures->celing[3] == 1)
 			return (errors("More than one celing\n"));
-		game->textures->celing[0] = add_color(0, split_line[1]);
-		game->textures->celing[1] = add_color(1, split_line[1]);
-		game->textures->celing[2] = add_color(2, split_line[1]);
-		game->textures->celing[3] = 255;
+		if (parse_rgb(split_line[1], game->textures->celing) == -1)
+			return (errors("Celing not correct\n"));
+		game->textures->celing[3] = 1;
 	}
-	if (!ft_strncmp(split_line[0], "F", 1) && ft_strlen(split_line[0]) == 1)
+	if (!ft_strncmp(split_line[0], "F", 1)
+		&& ft_strlen(split_line[0]) == 1)
 	{
-		if (game->textures->floor[3] == 255)
+		if (game->textures->floor[3] == 1)
 			return (errors("More than one floor\n"));
-		game->textures->floor[0] = add_color(0, split_line[1]);
-		game->textures->floor[1] = add_color(1, split_line[1]);
-		game->textures->floor[2] = add_color(2, split_line[1]);
-		game->textures->floor[3] = 255;
+		if (parse_rgb(split_line[1], game->textures->floor) == -1)
+			return (errors("Floor not correct\n"));
+		game->textures->floor[3] = 1;
 	}
 	return (0);
 }

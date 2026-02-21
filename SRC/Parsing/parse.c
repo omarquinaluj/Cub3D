@@ -12,6 +12,18 @@
 
 #include "../../INCLUDES/cub3d.h"
 
+void	init_cf(t_game *game)
+{
+	game->textures->celing[0] = -1;
+	game->textures->celing[1] = -1;
+	game->textures->celing[2] = -1;
+	game->textures->celing[3] = 0;
+	game->textures->floor[0] = -1;
+	game->textures->floor[1] = -1;
+	game->textures->floor[2] = -1;
+	game->textures->floor[3] = 0;
+}
+
 int	check_open(char *path)
 {
 	int	fd;
@@ -50,6 +62,7 @@ void	set_player_angle(t_game *game)
 
 int	parse(t_game *game, char *argv)
 {
+	init_cf(game);
 	if (check_cub(argv) == 1)
 		return (1);
 	if (open_save_all(argv, game, 0) == 1)
@@ -67,5 +80,6 @@ int	parse(t_game *game, char *argv)
 	if (!validate_map(game))
 		return (errors("Map not closed\n"));
 	set_player_angle(game);
+	adjust_player_start(game);
 	return (0);
 }
