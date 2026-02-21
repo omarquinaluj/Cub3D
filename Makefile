@@ -25,7 +25,8 @@ SRC				=	SRC/Main.c \
 					$(GAME_DIR)/control_keys.c \
 					$(GAME_DIR)/types_moves.c \
 					$(GAME_DIR)/draw_rays.c \
-					$(GAME_DIR)/set_texture.c
+					$(GAME_DIR)/set_texture.c \
+					$(GAME_DIR)/minimap.c
 
 
 OBJ				=	$(SRC:.c=.o)
@@ -74,4 +75,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re run r
