@@ -75,6 +75,9 @@ int	check_again(t_game *game)
 		return (errors("Not celing or floor\n"));
 	if (!game->is_map)
 		return (errors("Map not added\n"));
+	if (!game->textures->north || !game->textures->south
+		|| !game->textures->east || !game->textures->west)
+		return (errors("Missing texture\n"));
 	return (0);
 }
 

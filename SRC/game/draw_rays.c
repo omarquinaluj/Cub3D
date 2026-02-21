@@ -6,7 +6,7 @@
 /*   By: owmarqui <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/13 14:27:34 by owmarqui          #+#    #+#             */
-/*   Updated: 2026/02/13 14:27:37 by owmarqui         ###   ########.fr       */
+/*   Updated: 2026/02/18 13:05:39 by owmarqui         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,4 +81,5 @@ void	draw_rays(t_game *game)
 		draw_a_ray_vector(game, x);
 		x++;
 	}
+	draw_minimap(game);
 }

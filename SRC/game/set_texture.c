@@ -15,27 +15,20 @@
 unsigned int	get_pixel_from_texture(int wall_plane, int texture_y,
 					t_game *game)
 {
-	t_info	texture;
+	t_info	*texture;
 	char	*pixel_addr;
 
-	if (wall_plane == NORTH)
-		texture = game->info[0];
-	else if (wall_plane == SOUTH)
-		texture = game->info[1];
-	else if (wall_plane == EAST)
-		texture = game->info[2];
-	else
-		texture = game->info[3];
+	texture = &game->info[wall_plane];
 	if (game->rays.tex_x < 0)
 		game->rays.tex_x = 0;
-	if (game->rays.tex_x >= texture.width)
-		game->rays.tex_x = texture.width - 1;
+	if (game->rays.tex_x >= texture->width)
+		game->rays.tex_x = texture->width - 1;
 	if (texture_y < 0)
 		texture_y = 0;
-	if (texture_y >= texture.height)
-		texture_y = texture.height - 1;
-	pixel_addr = texture.data + (texture_y * texture.size_line)
-		+ (game->rays.tex_x * (texture.bpp / 8));
+	if (texture_y >= texture->height)
+		texture_y = texture->height - 1;
+	pixel_addr = texture->data + (texture_y * texture->size_line)
+		+ (game->rays.tex_x * (texture->bpp / 8));
 	return (*(unsigned int *)pixel_addr);
 }
 

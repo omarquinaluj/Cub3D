@@ -59,11 +59,8 @@ int	add_color(int num_color, char *line)
 	return (n);
 }
 
-int	color(char **split_line, t_game *game)
+int	color(char **split_line)
 {
-	if ((!game->textures->north || !game->textures->south
-			|| !game->textures->east || !game->textures->west))
-		return (errors("Textures aren't written correctly\n"));
 	if ((!ft_strncmp(split_line[0], "F", 1)
 			|| !ft_strncmp(split_line[0], "C", 1))
 		&& ft_strlen(split_line[0]) == 1)
@@ -76,7 +73,7 @@ int	color(char **split_line, t_game *game)
 
 int	check_colors(char **split_line, t_game *game)
 {
-	if (color(split_line, game) == 1)
+	if (color(split_line) == 1)
 		return (1);
 	if (!ft_strncmp(split_line[0], "C", 1) && ft_strlen(split_line[0]) == 1)
 	{

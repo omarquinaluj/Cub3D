@@ -28,6 +28,8 @@
 # include <sys/time.h> //gettimeofday
 # include <math.h>
 
+# define TILE_SIZE 8
+
 # define WIDTH 1280
 # define HEIGHT 1200
 # define PI 3.1415926535897932384626433832
@@ -188,5 +190,8 @@ void			draw_wall_line_2(t_game *game, int ray_iteration,
 					int wall_plane);
 void			calculate_and_draw(t_game *game, int side, int x);
 void			init_ray(t_game *game);
+
+//MINIMAP
+void			draw_minimap(t_game *game);
 
 #endif
